@@ -1,10 +1,7 @@
 package ru.shvets.springrestsensor.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
-import jakarta.validation.constraints.Max
-import jakarta.validation.constraints.Min
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.Pattern
 import java.time.LocalDateTime
 
 /**
@@ -21,13 +18,9 @@ class Measurement {
     @Column(name="id")
     var id: Long? = null
 
-    @field:NotEmpty(message = "Значение температуры не должно быть пустым")
-    @field:Min(value = -100, message = "Температура должна быть выше -100")
-    @field:Max(value = 100, message = "Температура должна быть ниже 100")
     @Column(name="value", nullable = false)
     var value: Float? = null
 
-    @field:Pattern(regexp = "^true$|^false$", message = "Должно быть true или false")
     @Column(name="is_raining")
     var raining: Boolean? = null
 
@@ -36,6 +29,7 @@ class Measurement {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name="sensor_id", referencedColumnName = "id")
+    @JsonBackReference
     var sensor: Sensor? = null
 
     constructor()

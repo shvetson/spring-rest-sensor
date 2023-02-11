@@ -10,9 +10,9 @@ import jakarta.validation.constraints.Size
  * @date  08.02.2023 22:30
  */
 
-class SensorDTO(
-    @field:NotEmpty(message = "Имя не должно быть пустым")
-    @field:Size(min = 2, max = 30, message = "Имя должно быть от 2 до 30 символов")
-    @Column(name = "name", nullable = false)
+data class SensorDTO(
+//    @field:NotEmpty(message = "Имя не должно быть пустым")
+//    @field:Size(min = 3, max = 30, message = "Имя должно быть от 3 до 30 символов")
+//    @field:Size(min = 3, max = 30, message = "{sensor.name.invalid}")
     var name: String? = null
 )

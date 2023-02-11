@@ -20,9 +20,13 @@ class SensorService(
     private val sensorRepository: SensorRepository
 ) {
 
+    fun getAll(): List<Sensor> {
+        return sensorRepository.findAll()
+    }
+
     fun findOne(id: Long): Sensor {
-        val sensor = sensorRepository.findById(id)
-        return sensor.orElseThrow { SensorNotFoundException(id) }
+        val sensor: Optional<Sensor> = sensorRepository.findById(id)
+        return sensor.orElseThrow { SensorNotFoundException() }
     }
 
     fun findByName(name: String): Optional<Sensor> {
@@ -35,7 +39,7 @@ class SensorService(
         sensorRepository.save(sensor)
     }
 
-    fun enrichSensor(sensor: Sensor) {
+    private fun enrichSensor(sensor: Sensor) {
         sensor.createdAt = LocalDateTime.now()
         sensor.updatedAt = LocalDateTime.now()
         sensor.createdWho = "ADMIN"

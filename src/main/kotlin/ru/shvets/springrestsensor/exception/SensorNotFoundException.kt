@@ -6,4 +6,4 @@ package ru.shvets.springrestsensor.exception
  * @date  08.02.2023 22:48
  */
 
-class SensorNotFoundException(id: Long): RuntimeException("Сенсор с id=${id} не найдет в базе данных")
+class SensorNotFoundException: RuntimeException("Сенсор не найден в базе данных")

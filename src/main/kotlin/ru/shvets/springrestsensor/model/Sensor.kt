@@ -1,8 +1,9 @@
 package ru.shvets.springrestsensor.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 /**
@@ -34,11 +35,8 @@ class Sensor {
     var createdWho: String? = null
 
     @OneToMany(mappedBy = "sensor")
+    @JsonManagedReference
     var measurements: List<Measurement>? = null
 
     constructor()
-
-    override fun toString(): String {
-        return "Sensor(id=$id, name=$name)"
-    }
 }

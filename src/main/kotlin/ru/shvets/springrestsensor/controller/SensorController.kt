@@ -1,6 +1,7 @@
 package ru.shvets.springrestsensor.controller
 
 import jakarta.validation.Valid
+import jakarta.validation.Validator
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -30,8 +31,9 @@ class SensorController(
 ) {
 
     @GetMapping("/{id}")
-    fun getSensor(@PathVariable("id")id: Long) : SensorDTO {
-        return modelMapper.map(sensorService.findOne(id), SensorDTO::class.java)
+    fun getSensor(@PathVariable("id") id: Long): SensorDTO {
+        val sensor = sensorService.findOne(id)
+        return modelMapper.map(sensor, SensorDTO::class.java)
     }
 
     @PostMapping("/registration")
@@ -39,7 +41,6 @@ class SensorController(
         @RequestBody @Valid sensorDTO: SensorDTO,
         bindingResult: BindingResult
     ): ResponseEntity<HttpStatus> {
-
         sensorValidator.validate(sensorDTO, bindingResult)
 
         if (bindingResult.hasErrors()) {
@@ -54,7 +55,8 @@ class SensorController(
             throw SensorNotCreateException(errorMessage.toString())
         }
 
-        sensorService.save(modelMapper.map(sensorDTO, Sensor::class.java))
+        val sensor = modelMapper.map(sensorDTO, Sensor::class.java)
+        sensorService.save(sensor)
         return ResponseEntity.ok(HttpStatus.OK)
     }
 
