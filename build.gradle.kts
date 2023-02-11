@@ -26,8 +26,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     runtimeOnly("org.postgresql:postgresql")
 
-    implementation("org.hibernate.validator:hibernate-validator:8.0.0.Final")
-    implementation("org.hibernate.validator:hibernate-validator-annotation-processor:8.0.0.Final")
+//    implementation("org.hibernate.validator:hibernate-validator:8.0.0.Final")
+//    implementation("org.hibernate.validator:hibernate-validator-annotation-processor:8.0.0.Final")
 
     implementation("org.modelmapper:modelmapper:3.1.1")
 }

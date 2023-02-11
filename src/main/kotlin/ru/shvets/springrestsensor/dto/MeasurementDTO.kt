@@ -1,7 +1,5 @@
 package ru.shvets.springrestsensor.dto
 
-import jakarta.validation.constraints.NotNull
-import org.hibernate.validator.constraints.Range
 import ru.shvets.springrestsensor.model.Sensor
 
 /**
@@ -11,16 +9,7 @@ import ru.shvets.springrestsensor.model.Sensor
  */
 
 data class MeasurementDTO (
-
-//    @field:Min(value = -100, message = "{measurement.temp.min}")
-//    @field:Max(value = 100, message = "{measurement.temp.max}")
-//    @field:NotNull(message = "{measurement.value.null}")
-//    @field:Range(min = -100, max = 100, message = "{measurement.temp.range}")
     var value: Float? = null,
-
-//    @field:NotNull(message = "{measurement.value.null}")
     var raining: Boolean? = null,
-
-//    @field:NotNull(message = "{measurement.value.null}")
     var sensor: Sensor? = null
 )

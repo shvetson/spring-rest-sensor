@@ -1,7 +1,6 @@
 package ru.shvets.springrestsensor.controller
 
 import jakarta.validation.Valid
-import jakarta.validation.Validator
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,7 +12,7 @@ import ru.shvets.springrestsensor.exception.SensorNotCreateException
 import ru.shvets.springrestsensor.exception.SensorNotFoundException
 import ru.shvets.springrestsensor.model.Sensor
 import ru.shvets.springrestsensor.service.SensorService
-import ru.shvets.springrestsensor.util.ErrorResponse
+import ru.shvets.springrestsensor.util.ResultResponse
 import ru.shvets.springrestsensor.util.SensorValidator
 
 /**
@@ -40,7 +39,7 @@ class SensorController(
     fun signIn(
         @RequestBody @Valid sensorDTO: SensorDTO,
         bindingResult: BindingResult
-    ): ResponseEntity<HttpStatus> {
+    ): ResponseEntity<ResultResponse> {
         sensorValidator.validate(sensorDTO, bindingResult)
 
         if (bindingResult.hasErrors()) {
@@ -57,21 +56,22 @@ class SensorController(
 
         val sensor = modelMapper.map(sensorDTO, Sensor::class.java)
         sensorService.save(sensor)
-        return ResponseEntity.ok(HttpStatus.OK)
+        return ResponseEntity(ResultResponse(), HttpStatus.OK)
     }
 
     @ExceptionHandler
-    fun handlerException(e: RuntimeException): ResponseEntity<ErrorResponse>{
-        val response = ErrorResponse()
+    fun handlerException(e: RuntimeException): ResponseEntity<ResultResponse>{
+        val response = ResultResponse()
         response.apply {
             this.message = e.message.toString()
+            this.success = false
             this.timestamp = System.currentTimeMillis()
         }
 
         val status: HttpStatus = when (e) {
             is SensorNotCreateException -> HttpStatus.BAD_REQUEST
             is SensorNotFoundException -> HttpStatus.NOT_FOUND
-            else -> HttpStatus.NOT_FOUND
+            else -> HttpStatus.BAD_REQUEST
         }
 
         return ResponseEntity(response, status)

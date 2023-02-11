@@ -52,16 +52,6 @@ class MeasurementController(
             throw MeasurementNotCreateException(message)
         }
 
-//        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
-//        val violations: Set<ConstraintViolation<MeasurementDTO>> = validator.validate(measurementDTO)
-//
-//        if (violations.isNotEmpty()) {
-//            val message = violations.stream()
-//                .map<String> { cv: ConstraintViolation<*>? -> cv!!.message }
-//                .collect(Collectors.joining(", "))
-//            throw MeasurementNotCreateException(message)
-//        }
-
         val sensor = sensorService.findByName(measurementDTO.sensor?.name.toString()).get()
 
         val measurement = modelMapper.map(measurementDTO, Measurement::class.java)
