@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  title: Sensor
+  description: | 
+    API сервис - погодный датчик
+    - Датчик фиксирует температуру / определяет наличие дождя и передает данные на сервер.
+    - Сервис принимает данные от сенсора / сохраняет в базу данных и предоставляет доступ к данным через API.
+  contact:
+    email: shvetson@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: https://localhost/api/v1
+tags:
+  - name: sensors
+    description: Регистрация сенсора
+  - name: measurements
+    description: Добавление измерений от сенсора, получение данных
+paths:
+  /sensors/registration:
+    post:
+      tags:
+        - sensors
+      summary: Регистрация нового сенсора
+      description: Регистрация нового сенсора
+      operationId: createSensor
+      requestBody:
+        description: Регистрация нового сенсора
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorCreateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorCreateResponse'
+        405:
+          description: Invalid input
+
+  /sensors/{id}:
+    get:
+      tags:
+        - sensors
+      summary: Получение инфо о сенсоре
+      description: Получение информации об одном сенсоре
+      operationId: readSensor
+      parameters:
+        - name: id
+          in: path
+          description: id of sensor to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Sensor not found
+
+  /measurememts:
+    get:
+      tags:
+        - measurements
+      summary: Запрос всех замеров из базы данных
+      description: Получение всех замеров из базы данных
+      operationId: getMeasurements
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+        400:
+          description: Invalid status value
+  /measurements/add:
+    post:
+      tags:
+        - measurements
+      summary: Добавление данных от сенсора (замер)
+      description: Добавление замера в базу данных
+      operationId: createMeasurement
+      requestBody:
+        description: Добавление замера в базу данных
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementCreateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Measurement'
+        405:
+          description: Invalid input
+
+components:
+  schemas:
+
+    Sensor:
+      type: object
+      description: Объект описывает свойства сенсора
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: id сенсора
+          example: 10
+        name:
+          type: string
+          description: Наименование сенсора
+          example: Sensor 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Время создания записи о сенсоре (регистрации)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Время обновления данных о сенсоре
+        createWho:
+          type: string
+          description: Лицо, которое зарегистрировало сенсор
+          example: ADMIN
+        measurements:
+          type: array
+          description: Список замеров
+          items:
+            $ref: '#components/schemas/Measurement'
+
+    Measurement:
+      type: object
+      description: Объект описывает свойства замера
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: id замера
+          example: 100
+        value:
+          type: number
+          format: float
+          description: Значение температуры
+          example: 10.6
+        raining:
+          type: boolean
+          description: Признак идет дождь или нет
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Время создания записи о замере
+        sensor:
+          $ref: '#/components/schemas/Sensor'
+
+    MeasurementCreateRequest:
+      type: object
+      description: Объект описывает данные для ввода замера
+      properties:
+        value:
+          type: number
+          format: float
+          description: Значение температуры
+          example: 10.6
+        raining:
+          type: boolean
+          description: Признак идет дождь или нет
+          example: true
+        sensor:
+          $ref: '#/components/schemas/SensorCreateRequest'
+
+    SensorCreateRequest:
+      type: object
+      description: Объект описывает данные по сенсору
+      properties:
+        name:
+          type: string
+          description: Наименование сенсора
+          example: Sensor 1
+
+    SensorId:
+      type: integer
+      format: int64
+      description: Идентификатор сенсора
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        group:
+          type: string
+        field:
+          type: string
+        message:
+          type: string
+
+    ResponseResult:
+      type: string
+      enum:
+        - success
+        - error
+
+    IResponse:
+      type: object
+      description: Базовый интерфейс для всех ответов
+      properties:
+        responseType:
+          type: string
+          description: Поле-дискриминатор для вычисления типа запроса
+          example: create
+        requestId:
+          type: string
+          description: Идентификатор запроса для отладки
+        result:
+          $ref: '#/components/schemas/ResponseResult'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+
+      discriminator:
+        propertyName: responseType
+        mapping:
+          create: '#/components/schemas/SensorCreateResponse'
+
+    SensorResponseObject:
+      allOf:
+        - $ref: '#/components/schemas/SensorCreateRequest'
+        - type: object
+          description: Объект, который возвращается в ответе бэкенда
+          properties:
+            id:
+              $ref: '#/components/schemas/SensorId'
+            permissions:
+              type: array
+              uniqueItems: true
+              items:
+                $ref: '#/components/schemas/SensorPermissions'
+
+    SensorPermissions:
+      type: string
+      description: Доступы для клиента для операций над сенсором
+      enum:
+        - read
+        - update
+        - delete
+
+    SensorResponseSingle:
+      allOf:
+        - type: object
+          description: Ответ с одним объектом - сенсором
+          properties:
+            sensor:
+              $ref: '#/components/schemas/SensorResponseObject'
+
+    SensorResponseMulti:
+      allOf:
+        - type: object
+          description: Список найденных объектов
+          properties:
+            sensors:
+              type: array
+              items:
+                $ref: '#/components/schemas/SensorResponseObject'
+
+    SensorCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/SensorResponseSingle'

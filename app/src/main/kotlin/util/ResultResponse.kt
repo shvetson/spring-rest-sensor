@@ -1,8 +1,5 @@
 package ru.shvets.springrestsensor.util
 
-import jakarta.validation.ConstraintViolation
-import java.util.stream.Collectors
-
 /**
  * @author  Oleg Shvets
  * @version 1.0

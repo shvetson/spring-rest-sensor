@@ -1,7 +1,5 @@
 package ru.shvets.springrestsensor.service
 
-import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Order
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.shvets.springrestsensor.model.Measurement
